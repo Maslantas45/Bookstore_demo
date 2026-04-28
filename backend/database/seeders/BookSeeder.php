@@ -2,23 +2,45 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Book;
 
 class BookSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void {
+    public function run(): void
+    {
         $books = [
-            ['title' => 'Simyacı', 'author' => 'Paulo Coelho', 'category' => 'Roman', 'price' => 42.00, 'rating' => 4.8, 'reviews' => 918, 'image_url' => 'https://images.isidore.org/api/v1/image/...'],
-            ['title' => 'Harry Potter', 'author' => 'J.K. Rowling', 'category' => 'Fantastik', 'price' => 88.00, 'rating' => 4.9, 'reviews' => 854, 'image_url' => '...'],
-            // Buraya 5-6 tane daha gerçekçi kitap ekle kral
+            [
+                'title' => 'Kumarbaz',
+                'author' => 'Fyodor Dostoyevski',
+                'category' => 'Roman',
+                'price' => 145.00,
+                'rating' => 4.8,
+                'reviews' => 1250,
+                'image_url' => 'https://www.canyayinlari.com/productimages/120068/big/9789750751400_front_cover1.jpg'
+            ],
+            [
+                'title' => 'Sefiller',
+                'author' => 'Victor Hugo',
+                'category' => 'Roman',
+                'price' => 210.00,
+                'rating' => 4.9,
+                'reviews' => 840,
+                'image_url' => 'https://cdn.timas.com.tr/urun/sefiller-9786054985326.jpg'
+            ],
+            [
+                'title' => 'Cesur Yeni Dünya',
+                'author' => 'Aldous Huxley',
+                'category' => 'Bilim Kurgu',
+                'price' => 165.00,
+                'rating' => 4.7,
+                'reviews' => 960,
+                'image_url' => 'https://1k-cdn.com/resimler/kitaplar/27823_o4Hlz_1650549400.jpg'
+            ]
         ];
 
         foreach ($books as $book) {
-            \App\Models\Book::create($book);
+            Book::create($book);
         }
     }
 }
