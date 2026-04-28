@@ -1,81 +1,60 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const Dashboard = () => {
+const StoreFront = () => {
     const [books, setBooks] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("Tümü");
+    const navigate = useNavigate();
+
+    const categories = ["Tümü", "Roman", "Bilim Kurgu", "Fantastik", "Dünya Klasikleri", "Kişisel Gelişim", "Çocuk"];
 
     const fetchBooks = async () => {
-        try {
-            const res = await axios.get("http://127.0.0.1:8000/api/books");
-            setBooks(res.data);
-        } catch (err) {
-            console.error("Veritabanına bağlanılamadı!", err);
-        }
+        const res = await axios.get("http://127.0.0.1:8000/api/books");
+        setBooks(res.data);
     };
 
-    useEffect(() => {
-        fetchBooks();
-    }, []);
+    useEffect(() => { fetchBooks(); }, []);
 
-    const handleAdminReset = async () => {
-        if (window.confirm("Sistem 'Altın Duruma' sıfırlanacak. Emin misin?")) {
-            try {
-                const res = await axios.post("http://127.0.0.1:8000/api/demo-reset");
-                alert(res.data.message);
-                fetchBooks(); // Tabloyu tazele
-            } catch (err) {
-                alert("Sıfırlama başarısız!");
-            }
-        }
+    const handleSearch = async () => {
+        const res = await axios.get(`http://127.0.0.1:8000/api/books?search=${searchTerm}`);
+        setBooks(res.data);
     };
+
+    const displayedBooks = books.filter(book => selectedCategory === "Tümü" || book.category === selectedCategory);
 
     return (
-        <div style={{ padding: "40px", fontFamily: "Arial, sans-serif" }}>
-            <h1 style={{ color: "#2d3748" }}>Bookstore Admin Paneli</h1>
+        <div style={{ padding: "40px", fontFamily: "Arial", backgroundColor: "#f3f4f6", minHeight: "100vh" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h1 style={{ color: "#333" }}>KitapÜssü</h1>
+                <button onClick={() => navigate('/login')} style={{ padding: "12px 24px", backgroundColor: "#ea580c", color: "white", border: "none", borderRadius: "25px", cursor: "pointer", fontWeight: "bold" }}>
+                    Admin Girişi
+                </button>
+            </div>
 
-            <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px", boxShadow: "0 2px 5px rgba(0,0,0,0.1)" }}>
-                <thead>
-                <tr style={{ backgroundColor: "#edf2f7", textAlign: "left" }}>
-                    <th style={{ padding: "12px", border: "1px solid #dee2e6" }}>Kitap Adı</th>
-                    <th style={{ padding: "12px", border: "1px solid #dee2e6" }}>Yazar</th>
-                    <th style={{ padding: "12px", border: "1px solid #dee2e6" }}>Fiyat</th>
-                </tr>
-                </thead>
-                <tbody>
-                {books.length > 0 ? (
-                    books.map((book) => (
-                        <tr key={book.id}>
-                            <td style={{ padding: "12px", border: "1px solid #dee2e6" }}>{book.title}</td>
-                            <td style={{ padding: "12px", border: "1px solid #dee2e6" }}>{book.author}</td>
-                            <td style={{ padding: "12px", border: "1px solid #dee2e6" }}>{book.price} TL</td>
-                        </tr>
-                    ))
-                ) : (
-                    <tr><td colSpan="3" style={{ padding: "20px", textAlign: "center" }}>Veri yükleniyor veya veritabanı boş...</td></tr>
-                )}
-                </tbody>
-            </table>
+            {/* Kategori Çubuğu */}
+            <div style={{ display: "flex", gap: "10px", marginBottom: "25px", overflowX: "auto" }}>
+                {categories.map(cat => (
+                    <button key={cat} onClick={() => setSelectedCategory(cat)} style={{ padding: "10px 20px", backgroundColor: selectedCategory === cat ? "#ea580c" : "white", color: selectedCategory === cat ? "white" : "#4b5563", border: "1px solid #d1d5db", borderRadius: "20px", cursor: "pointer" }}>
+                        {cat}
+                    </button>
+                ))}
+            </div>
 
-            <button
-                onClick={handleAdminReset}
-                style={{
-                    position: "fixed",
-                    bottom: "30px",
-                    right: "30px",
-                    backgroundColor: "#ed8936",
-                    color: "white",
-                    padding: "15px 30px",
-                    border: "none",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    fontWeight: "bold",
-                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
-                }}
-            >
-                Admin Reset
-            </button>
+            {/* Arama ve Kitaplar (Aynı Kalıyor) */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "25px" }}>
+                {displayedBooks.map(book => (
+                    <div key={book.id} style={{ backgroundColor: "white", padding: "15px", borderRadius: "10px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}>
+                        <img src={book.image_url || "https://via.placeholder.com/150"} style={{ width: "100%", height: "250px", objectFit: "cover" }} />
+                        <h3 style={{ fontSize: "16px", marginTop: "10px" }}>{book.title}</h3>
+                        <p style={{ color: "#ea580c", fontWeight: "bold" }}>{book.price} TL</p>
+                    </div>
+                ))}
+            </div>
+            {/* RESET BUTONU BURADAN KALDIRILDI! */}
         </div>
     );
 };
 
-export default Dashboard;
+export default StoreFront;

@@ -12,9 +12,13 @@ return new class extends Migration
     public function up(): void {
         Schema::create('books', function (Blueprint $table) {
             $table->id();
-            $table->string('title'); // Kitap Adı
-            $table->string('author'); // Yazar
-            $table->decimal('price', 8, 2); // Fiyat
+            $table->string('title');
+            $table->string('author');
+            $table->string('category'); // Roman, Bilim vb.
+            $table->decimal('price', 8, 2);
+            $table->string('image_url')->nullable(); // Kitap kapak resmi
+            $table->float('rating')->default(0); // 4.5 gibi
+            $table->integer('reviews')->default(0); // Yorum sayısı
             $table->timestamps();
         });
     }
